@@ -19,9 +19,12 @@ This project provides an end-to-end empirical analytics workflow for hotel reven
 * **Properties Covered:** 
   * **H1 (Resort Hotel):** A resort property located in the Algarve coastal region of southern Portugal (40,060 raw bookings).
   * **H2 (City Hotel):** An urban hotel located in the city of Lisbon, Portugal (79,330 raw bookings).
-* **Temporal Horizon:** Bookings arriving between **July 1, 2015 and August 31, 2017** (26 calendar months).
+* **Temporal Horizon:** 
+  * **Full Booking Dataset:** Arrivals span **July 1, 2015 to August 31, 2017** (26 calendar months; 793 calendar days).
+  * **Weekly Demand Forecasting Window:** **July 6, 2015 to August 27, 2017** (exactly 112 complete 7-day Monday–Sunday weeks / 784 days). Partial boundary days (July 1–5, 2015 [Wednesday–Sunday] and August 28–31, 2017 [Monday–Thursday]) are explicitly excluded from weekly time-series aggregation to prevent distorted partial-week occupancy totals.
 * **Raw Observations:** 119,390 rows across 32 features.
-* **Cleaned Analytical Observations:** 118,563 rows across 43 features (827 physically invalid records excluded: zero guests, zero nights, negative ADR, and extreme ADR typo 5400).
+* **Cleaned Analytical Observations:** 118,563 rows across 43 features (827 physically invalid records excluded: zero guests, zero nights, negative ADR, and extreme ADR outlier 5400).
+* **Data Storage & Reproducibility Note:** Both the unmodified raw dataset (`data/raw/hotel_bookings.csv`, ~17 MB) and the fully cleaned processed dataset (`data/processed/hotel_bookings_cleaned.csv`, ~28 MB) are intentionally included directly in the repository. Retaining the processed dataset ensures that all downstream analytical and modeling scripts (`03` through `06`) can be executed independently and immediately reproduced without requiring prior data wrangling execution, while keeping file sizes well within GitHub's standard 100 MB file limit without requiring Git LFS.
 
 ---
 
@@ -49,7 +52,7 @@ DADM_Hotel_Booking_Demand_Analytics/
 │   ├── pricing_analysis_summary.txt       # Econometric pricing results log
 │   ├── cancellation_analysis_summary.txt  # Cancellation classification log
 │   ├── demand_forecasting_summary.txt     # Time-series forecasting performance log
-│   ├── plots/                             # 13 publication-quality diagnostic figures (PNG)
+│   ├── plots/                             # 18 publication-quality diagnostic figures (PNG)
 │   │   ├── 01_target_and_hotel_distribution.png
 │   │   ├── 02_numeric_distributions_outliers.png
 │   │   ├── eda_01_cancellation_by_hotel.png
@@ -158,7 +161,7 @@ Rscript R/06_business_recommendations.R
   * Phantom Bookings: 180 rows with 0 adults, 0 children, and 0 babies.
   * Zero Overnight Stays: 715 rows with 0 week and 0 weekend nights.
   * Negative ADR: 1 row with ADR = -$6.38 (accounting adjustment).
-  * Extreme ADR Outlier: 1 row with ADR = $5,400.00 in standard Room A (typo).
+  * Extreme ADR Outlier: 1 row with ADR = $5,400.00 in standard Room A excluded from the analytical sample.
 * **Key Derived Features:** `total_nights`, `arrival_date` (ISO Date), `total_guests`, `lead_time_bracket`, `room_type_mismatch`, `is_duplicate`.
 
 ### Phase 2: Pricing Analysis (`03_pricing_analysis.R`)
@@ -188,14 +191,16 @@ Rscript R/06_business_recommendations.R
   * *Diagnostic Sensitivity Model (18 features):* Incorporates `deposit_type` (**AUC = 0.8203**, Accuracy = 75.91%).
 * **Predictor Audit & Qualifications:**
   * `required_car_parking_spaces`: $\beta = -42.11, \text{SE} = 46.15, p = 0.3616$. Zero cancellations occurred among parking requesters in the sample, producing quasi-complete separation and an inflated standard error that renders the Wald test statistically insignificant. It reflects a high-intent sub-cohort rather than a causal intervention.
-  * `lead_time`: $\text{OR} = 1.0054/\text{day}$ ($p < 2.2 \times 10^{-16}$; each 30 days increases odds by $+17.2\%$).
+  * `lead_time`: $\text{OR} = 1.0053/\text{day}$ ($p < 2.2 \times 10^{-16}$). Each 30-day increase in lead time increases the odds of cancellation by $+17.1\%$ ($\text{OR}_{30} = \exp(30 \times 0.00525) \approx 1.1706$; note: this represents relative cancellation odds, not a percentage-point increase in cancellation probability). A 90-day horizon increases cancellation odds by $+60.4\%$ ($\text{OR}_{90} \approx 1.604$).
   * `previous_cancellations`: $\text{OR} = 22.26$ ($p < 2.2 \times 10^{-16}$).
 * **Overbooking Policy Caution:** An optimal overbooking quota cannot be mathematically derived without underage cost ($C_u$) and overage walk cost ($C_o$) accounting data.
 
 ### Phase 4: Demand Forecasting (`05_demand_forecasting.R`)
 * **Research Question:** How accurately can we forecast future weekly occupied room-nights for the two hotels?
-* **Target:** Weekly occupied room-nights allocated across calendar dates for completed stays (`is_canceled == 0`) across 112 full weeks (July 2015 – August 2017).
-* **Chronological Split & Protocol:** Train Weeks 1–78 (2015–2016); Test Weeks 79–112 (2017, 34 weeks).
+* **Target:** Weekly occupied room-nights allocated across calendar dates for completed stays (`is_canceled == 0`) across 112 complete 7-day Monday–Sunday weeks (**July 6, 2015 through August 27, 2017**).
+* **Chronological Split & Protocol:** 
+  * Training Set: Weeks 1–78 (**July 6, 2015 to January 1, 2017**; 78 complete weeks).
+  * Testing Set: Weeks 79–112 (**January 2, 2017 to August 27, 2017**; 34 complete weeks).
   * *Forecasting Protocol:* Rolling 1-step-ahead forecasts ($h=1$ week ahead). At each test week $t$, models use realized data through $t-1$ to update level and trend states. No future test observations are used.
 * **Methods:** Naive (Lag 1), SMA-4 (4-week moving average), Simple Exponential Smoothing (SES), Holt's Linear Trend, Seasonal Naive (Lag 52).
 * **Key Findings:**

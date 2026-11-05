@@ -22,7 +22,7 @@ Audit Qualification of Key Predictors:
     However, because of near-zero variance / quasi-complete separation, the Wald test standard error
     is heavily inflated (SE = 46.15), making the coefficient statistically insignificant.
     It reflects a non-representative sub-cohort and cannot be used as an operational panacea.
- 2. lead_time: OR = 1.0054 per day (p < 2.2e-16; each 30 days increases cancellation odds by +17.2%).
+ 2. lead_time: OR = 1.0054 per day (p < 2.2e-16; each 30 days increases cancellation odds by +17.1%; note: reflects odds, not probability).
  3. previous_cancellations: OR = 22.26 (p < 2.2e-16; prior history multiplies odds by 22.3x).
  4. total_of_special_requests: OR = 0.4099 (p < 2.2e-16; each request reduces odds by 59.0%).
 

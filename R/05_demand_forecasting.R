@@ -153,12 +153,12 @@ log_print("--- STEP 3: CHRONOLOGICAL TIME SERIES SPLIT ---\n")
 n_train_weeks <- 78
 n_test_weeks  <- 34
 
-log_print(sprintf("Training Period: Weeks 1 - 78 (%s to %s | 78 weeks)\n",
+log_print(sprintf("Training Period: Weeks 1 - 78 (%s to %s | 78 complete weeks)\n",
                   as.character(resort_weekly$week_start[1]), 
-                  as.character(resort_weekly$week_start[n_train_weeks])))
-log_print(sprintf("Testing Period : Weeks 79 - 112 (%s to %s | 34 weeks)\n\n",
+                  as.character(resort_weekly$week_start[n_train_weeks] + 6)))
+log_print(sprintf("Testing Period : Weeks 79 - 112 (%s to %s | 34 complete weeks)\n\n",
                   as.character(resort_weekly$week_start[n_train_weeks + 1]), 
-                  as.character(resort_weekly$week_start[nrow(resort_weekly)])))
+                  as.character(resort_weekly$week_start[nrow(resort_weekly)] + 6)))
 
 log_print("Note on Seasonal Decomposition:\n")
 log_print(" Classical seasonal decomposition (STL or decompose) requires at least two complete seasonal cycles\n")

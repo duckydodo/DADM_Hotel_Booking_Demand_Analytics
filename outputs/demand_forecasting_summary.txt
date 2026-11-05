@@ -27,8 +27,8 @@ Operational Rationale for Separate Modeling:
  - Pooling them would obscure their fundamentally different volatility structures and staffing requirements.
 
 --- STEP 3: CHRONOLOGICAL TIME SERIES SPLIT ---
-Training Period: Weeks 1 - 78 (2015-07-06 to 2016-12-26 | 78 weeks)
-Testing Period : Weeks 79 - 112 (2017-01-02 to 2017-08-21 | 34 weeks)
+Training Period: Weeks 1 - 78 (2015-07-06 to 2017-01-01 | 78 complete weeks)
+Testing Period : Weeks 79 - 112 (2017-01-02 to 2017-08-27 | 34 complete weeks)
 
 Note on Seasonal Decomposition:
  Classical seasonal decomposition (STL or decompose) requires at least two complete seasonal cycles

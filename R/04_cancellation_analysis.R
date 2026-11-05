@@ -223,7 +223,7 @@ log_print("    Methodological Note: In the sample, 0 cancellations occurred amon
 log_print("    However, because of near-zero variance / quasi-complete separation, the Wald test standard error\n")
 log_print("    is heavily inflated (SE = 46.15), making the coefficient statistically insignificant.\n")
 log_print("    It reflects a non-representative sub-cohort and cannot be used as an operational panacea.\n")
-log_print(sprintf(" 2. lead_time: OR = %.4f per day (p < 2.2e-16; each 30 days increases cancellation odds by +17.2%%).\n",
+log_print(sprintf(" 2. lead_time: OR = %.4f per day (p < 2.2e-16; each 30 days increases cancellation odds by +17.1%%; note: reflects odds, not probability).\n",
                   coef_glm["lead_time", "Odds_Ratio"]))
 log_print(sprintf(" 3. previous_cancellations: OR = %.2f (p < 2.2e-16; prior history multiplies odds by 22.3x).\n",
                   coef_glm["previous_cancellations", "Odds_Ratio"]))

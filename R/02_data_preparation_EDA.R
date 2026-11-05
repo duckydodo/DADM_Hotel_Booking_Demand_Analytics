@@ -99,8 +99,8 @@ cond_neg_adr <- raw_df$adr < 0
 
 # Condition 4: Extreme ADR Outlier (ADR > 5000)
 # Rationale: A single entry in City Hotel room type A has ADR = 5,400.00 while the 
-# median is 94.58 and the 99th percentile is 252.00. This is an undeniable data entry 
-# typo that would severely distort linear models and variance estimators.
+# median is 94.58 and the 99th percentile is 252.00. This is an extreme ADR outlier 
+# excluded from the analytical sample to prevent distortion of linear models and variance estimators.
 cond_outlier_adr <- raw_df$adr > 5000
 
 # Combined removal filter
@@ -112,7 +112,7 @@ cleaning_audit <- data.frame(
     "Zero Total Guests (Phantom Bookings: adults+children+babies == 0)",
     "Zero Overnight Stays (stays_in_weekend + stays_in_week == 0)",
     "Negative ADR (Accounting adjustment / error: ADR < 0)",
-    "Extreme ADR Outlier (Typo: ADR == 5400 in standard room)",
+    "Extreme ADR Outlier (ADR == 5400 in standard room)",
     "Overlap between criteria (multi-condition matches)",
     "TOTAL UNIQUE ROWS EXCLUDED"
   ),

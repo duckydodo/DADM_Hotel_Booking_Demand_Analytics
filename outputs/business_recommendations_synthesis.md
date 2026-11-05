@@ -11,7 +11,7 @@
 This project applied rigorous econometrics, machine learning classification, and time-series forecasting to evaluate three core operational dimensions of hotel performance:
 1. **Pricing Drivers (ADR):** Modeled on 73,383 completed, paid reservations (reconciled programmatically from 118,563 cleaned records) via Multiple Linear Regression (MLR, $R^2 = 61.16\%$) and Regression CART ($R^2 = 66.53\%$). Seasonality, room tiering, party size, and channel contracts dominate rate realization.
 2. **Cancellation Risk (`is_canceled`):** Evaluated strictly on an out-of-sample 2017 chronological test set ($N = 40,509$). The **Restricted Initial-Booking Logistic Regression** (14 predictors known at booking creation) achieved an **AUC of 0.7372** (Accuracy $69.26\%$, Precision $67.13\%$, Specificity $87.31\%$, F1 $0.5078$), representing the true advance operational baseline. Incorporating dynamic pre-arrival updates (special requests, booking changes) in the **Extended Model** lifted **AUC to 0.7953** (Accuracy $73.95\%$, Precision $71.54\%$, F1 $0.6196$), outperforming CART (AUC $0.7277$).
-3. **Occupied Room-Night Forecasting:** Weekly occupied room-nights were reconstructed across calendar dates for completed stays ($N = 112$ weeks). Simple Exponential Smoothing (SES) achieved the lowest Test RMSE for both properties (**Resort: 93.72 room-nights, MAPE 6.32% | City: 113.49 room-nights, MAPE 6.16%**). Dividing weekly RMSE by 7 yields a rough scale conversion of ~13–16 rooms/day (not true daily operational uncertainty).
+3. **Occupied Room-Night Forecasting:** Weekly occupied room-nights were reconstructed across calendar dates for completed stays ($N = 112$ complete 7-day weeks, July 6, 2015 to August 27, 2017). Simple Exponential Smoothing (SES) achieved the lowest Test RMSE for both properties (**Resort: 93.72 room-nights, MAPE 6.32% | City: 113.49 room-nights, MAPE 6.16%**). Dividing weekly RMSE by 7 yields a rough scale conversion of ~13–16 rooms/day (not true daily operational uncertainty).
 
 ---
 
@@ -76,7 +76,7 @@ To ensure total transparency, every stage of data filtering from the 118,563 cle
 1. **Initial Booking Horizon (100–30 Days Out):** Only the Restricted Model is legitimate at this stage. Special requests, booking amendments, and parking requirements have not yet occurred. The Restricted Model provides an **AUC of 0.7372**, enabling management to identify inherently risky reservation cohorts (long lead times, wholesale groups, repeat cancellers) for deposit rules.
 2. **Dynamic Pre-Arrival Window (14–3 Days Out):** Incorporating customer engagement (special requests, booking changes) lifts discrimination to **AUC 0.7953** (+0.058 AUC). Guest communication closer to arrival provides substantial predictive lift.
 3. **Qualification of the Parking Predictor (`required_car_parking_spaces`):** In the sample, zero guests who requested parking cancelled. However, because of quasi-complete separation, the Wald test standard error is heavily inflated ($\beta = -42.11, \text{SE} = 46.15, z = -0.91, p = 0.3616$), rendering the coefficient **statistically insignificant**. While parking requesters reflect an empirical sub-cohort with high intent, this cannot be interpreted as a causal mechanism or an operational panacea.
-4. **Lead Time Effect:** Each 30 days of lead time increases cancellation odds by **+17.2%** (OR = 1.0054/day). A booking made 90 days in advance carries +62.6% higher odds of cancellation than a same-day arrival.
+4. **Lead Time Effect:** Each 30 days of lead time increases cancellation odds by **+17.1%** ($\text{OR}_{30} = \exp(30 \times 0.00525) \approx 1.1706$; note: this represents relative odds of canceling versus not canceling, not a percentage-point increase in cancellation probability). A booking made 90 days in advance carries +60.4% higher odds of cancellation ($\text{OR}_{90} \approx 1.604$) than a same-day arrival.
 5. **Prior History:** Guests with prior cancellations exhibit a **22.3x higher odds** of re-canceling (OR = 22.26).
 
 ### Why Direct Optimal Overbooking Cannot Be Claimed
@@ -90,7 +90,7 @@ $$\text{Critical Fractile } P^* = \frac{C_u}{C_u + C_o}$$
 
 ## 4. Pillar 3: Operational Demand Forecasting
 
-### 34-Week Holdout Test Performance (Weeks 79–112: Jan–Aug 2017)
+### 34-Week Holdout Test Performance (Weeks 79–112: Jan 2, 2017 – Aug 27, 2017)
 
 | Hotel Property | Forecasting Model | Test MAE (Room-Nights) | Test RMSE (Room-Nights) | Test MAPE (%) | Model Status |
 | :--- | :--- | :---: | :---: | :---: | :--- |
@@ -124,7 +124,7 @@ $$\text{Critical Fractile } P^* = \frac{C_u}{C_u + C_o}$$
 
 ### Recommendation 2: Tiered Lead-Time Cancellation Protections
 - **Finding:** Long booking horizons are the single strongest predictor of cancellation.
-- **Evidence:** Each 30 days of lead time increases cancellation odds by +17.2% (OR = 1.0054). Group bookings carry 3.0x higher cancellation odds.
+- **Evidence:** Each 30 days of lead time increases cancellation odds by +17.1% (OR = 1.0053/day, OR_30 = 1.1706; distinguishing relative odds from probability). Group bookings carry 3.0x higher cancellation odds.
 - **Possible Action:** Introduce a tiered cancellation window: bookings made $>60$ days out should receive automated re-confirmation nudges and modest prepaid non-refundable discounts (e.g. 10% off for non-refundable commitment).
 - **Limitation:** Causal relationship is unproven; forced non-refundable policies on price-sensitive retail segments could deter booking placement entirely.
 
@@ -148,7 +148,7 @@ $$\text{Critical Fractile } P^* = \frac{C_u}{C_u + C_o}$$
 2. **Geographic & Institutional Narrowness:** The dataset originates from two specific hotels in Portugal (an urban hotel in Lisbon and a resort in the Algarve). Results cannot be generalized globally without local recalibration.
 3. **Absence of Cost & Profitability Accounting:** The data records gross room revenue (ADR) without deducting travel agent commissions (often 15–25% for OTAs), merchant processing fees, food preparation costs, or cancellation forfeiture fee collections.
 4. **Data Timing & Leakage Traps:** Operational variables (`reservation_status`, `assigned_room_type`, `room_type_mismatch`, `booking_changes`) must be strictly audited in prospective deployments to avoid temporal leakage.
-5. **Short Historical Time Span:** The dataset spans exactly 26 months (July 2015 – August 2017). A single prior seasonal cycle is statistically insufficient to confirm stable multi-year seasonality or permanent secular trends.
+5. **Short Historical Time Span:** The dataset spans 26 calendar months (arrivals July 1, 2015 – August 31, 2017; forecasting window July 6, 2015 – August 27, 2017). A single prior seasonal cycle is statistically insufficient to confirm stable multi-year seasonality or permanent secular trends.
 
 ---
 *Document compiled automatically from project analytical outputs. All cited values are verifiable in `outputs/tables/` and `outputs/plots/`.*
