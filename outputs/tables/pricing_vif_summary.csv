@@ -1,0 +1,6 @@
+"Variable","VIF","Status"
+"adults",1.036,"Low Collinearity (VIF < 5)"
+"children",1.003,"Low Collinearity (VIF < 5)"
+"babies",1.002,"Low Collinearity (VIF < 5)"
+"total_nights",1.103,"Low Collinearity (VIF < 5)"
+"lead_time",1.096,"Low Collinearity (VIF < 5)"

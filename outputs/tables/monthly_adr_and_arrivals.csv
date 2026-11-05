@@ -1,0 +1,25 @@
+"Month","Hotel","Total_Arrivals","Cancellation_Rate_Pct","Average_ADR"
+"January","City Hotel",3712,39.84,83.16
+"February","City Hotel",4917,38.5,85.9
+"March","City Hotel",6410,37.18,92.48
+"April","City Hotel",7458,46.37,111.56
+"May","City Hotel",8184,44.62,122.32
+"June","City Hotel",7874,44.78,119.35
+"July","City Hotel",8054,40.99,111.18
+"August","City Hotel",8952,40.21,115.05
+"September","City Hotel",7377,42.13,110.34
+"October","City Hotel",7554,43.26,100.65
+"November","City Hotel",4309,38.52,88.93
+"December","City Hotel",4097,42.4,89.58
+"January","Resort Hotel",2159,15.01,50.24
+"February","Resort Hotel",3081,25.74,55.57
+"March","Resort Hotel",3304,23.06,58.08
+"April","Resort Hotel",3587,29.47,78.33
+"May","Resort Hotel",3520,29.06,79.63
+"June","Resort Hotel",3017,33.34,111.47
+"July","Resort Hotel",4532,31.66,156.59
+"August","Resort Hotel",4860,33.68,188.1
+"September","Resort Hotel",3100,32.45,93.49
+"October","Resort Hotel",3510,27.83,62.89
+"November","Resort Hotel",2403,19.14,48.96
+"December","Resort Hotel",2592,24.31,70.46

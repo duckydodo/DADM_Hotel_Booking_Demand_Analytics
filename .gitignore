@@ -1,0 +1,12 @@
+# R session & environment files
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+
+# OS & editor metadata
+.DS_Store
+Thumbs.db
+*.swp
+*~

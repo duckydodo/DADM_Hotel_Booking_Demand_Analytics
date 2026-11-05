@@ -1,0 +1,33 @@
+================================================================================
+       DADM HOTEL BOOKING DEMAND ANALYTICS: BUSINESS RECOMMENDATIONS     
+================================================================================
+
+1. PRICING DECISIONS (ADR):
+   - Sample strictly reconciled: 118,563 -> 74,388 -> 73,388 -> 73,387 -> 73,383.
+   - August High Season adds +$74.17/night over January baseline (p < 2.2e-16).
+   - Suite tiers command substantial markups (Room G: +$60.16, Room H: +$63.84/night).
+   - Additional adults add +$13.33/night; children add +$13.98/night.
+   - CART achieved superior test prediction (Test R2: 66.53% vs MLR: 61.16%) by
+     naturally isolating non-linear seasonal interactions (Resort x August).
+
+2. CANCELLATION RISK (is_canceled):
+   - Restricted Initial-Booking Model (14 features): Test AUC = 0.7372 (Acc: 69.26%, F1: 0.5078).
+   - Extended Pre-Arrival Model (17 features): Test AUC = 0.7953 (Acc: 73.95%, F1: 0.6196).
+   - Dynamic pre-arrival engagement adds +0.058 AUC over initial booking baseline.
+   - Parking predictor qualified: p = 0.3616 (insignificant) due to complete separation.
+   - Direct overbooking optimization is IMPOSSIBLE without explicit underage (Cu) and overage (Co) costs.
+
+3. OPERATIONAL DEMAND FORECASTING (Occupied Room-Nights):
+   - Simple Exponential Smoothing (SES) won across both properties (Test MAPE: ~6.2%).
+   - Weekly RMSE of 93.7 (Resort) and 113.5 (City) translates to an average scale conversion
+     of ~13-16 rooms/day (not true daily operational uncertainty).
+   - Proposed heuristic staffing policy (e.g. 90% core) requires local cost-benefit validation.
+   - SNaive failed (MAPE > 10.9%) due to uncaptured annual secular growth between 2016 and 2017.
+   - The 26-month historical span limits claims regarding multi-year seasonal permanence.
+
+4. INTEGRATED POLICY MATRIX:
+   - Full Finding -> Evidence -> Action -> Limitation matrix saved to:
+     outputs/tables/integrated_recommendations_matrix.csv
+   - Comprehensive Executive Synthesis saved to:
+     outputs/business_recommendations_synthesis.md
+================================================================================

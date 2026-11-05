@@ -1,0 +1,91 @@
+================================================================================
+     HOTEL DEMAND FORECASTING: WEEKLY OCCUPIED ROOM-NIGHTS PREDICTION   
+================================================================================
+
+--- STEP 1: ALLOCATION OF COMPLETED STAYS TO CALENDAR ROOM-NIGHTS ---
+Weekly Time Series Construction Details:
+ - Calendar Coverage: 2015-07-06 to 2017-08-27 (exactly 112 full 7-day weeks)
+ - Target Variable: 'weekly_occupied_nights' (sum of daily occupied rooms across each 7-day week)
+ - Zero Value Audit: No zero-demand weeks exist (Resort Min: 350 | City Min: 153)
+   --> MAPE is mathematically defined and well-behaved across all evaluation periods.
+
+Limitations of Using Historical PMS Extracts to Reconstruct Occupancy:
+ 1. Left-Censoring: Guests who checked in prior to July 1, 2015 but stayed into July are missing from
+    the raw extract. Starting our full series on July 6 (Week 2) mitigates initial ramp-up artifacts.
+ 2. Right-Censoring: Arrivals terminate on August 31, 2017. Truncating at August 27 avoids end-of-sample decay.
+ 3. Physical Capacity Unrecorded: The PMS extract records transactions, not physical room caps.
+
+--- STEP 2: COMPARATIVE TIME SERIES PROPERTIES (WHY MODEL SEPARATELY) ---
+Resort Hotel Weekly Occupancy: Mean = 1055.4 | SD = 264.6 | Min = 350 | Max = 1277
+City Hotel Weekly Occupancy  : Mean = 1189.2 | SD = 382.2 | Min = 153 | Max = 1563
+
+Operational Rationale for Separate Modeling:
+ - Resort Hotel demand displays severe seasonal volatility (soaring to ~1,277 in summer, dropping to ~350 in winter)
+   governed by holiday schedules and weather.
+ - City Hotel demand is more stable throughout the year (~1,189 average), driven by corporate business
+   and urban weekend leisure, with shorter stay durations.
+ - Pooling them would obscure their fundamentally different volatility structures and staffing requirements.
+
+--- STEP 3: CHRONOLOGICAL TIME SERIES SPLIT ---
+Training Period: Weeks 1 - 78 (2015-07-06 to 2016-12-26 | 78 weeks)
+Testing Period : Weeks 79 - 112 (2017-01-02 to 2017-08-21 | 34 weeks)
+
+Note on Seasonal Decomposition:
+ Classical seasonal decomposition (STL or decompose) requires at least two complete seasonal cycles
+ (2 x 52 = 104 weeks of training data). Because the training set covers 78 weeks (1.5 years),
+ seasonal decomposition cannot be reliably estimated and is responsibly not forced.
+
+Model Comparison on 34-Week Holdout Test Period (Jan - Aug 2017):
+        Hotel                              Model                  Parameters
+ Resort Hotel                    Naive Benchmark                None (Lag 1)
+ Resort Hotel      Simple Moving Average (SMA-4)                  Window k=4
+ Resort Hotel Simple Exponential Smoothing (SES)               alpha = 0.802
+ Resort Hotel                Holt's Linear Trend alpha = 0.850, beta = 0.105
+ Resort Hotel            Seasonal Naive (Lag 52)                    Lag s=52
+   City Hotel                    Naive Benchmark                None (Lag 1)
+   City Hotel      Simple Moving Average (SMA-4)                  Window k=4
+   City Hotel Simple Exponential Smoothing (SES)               alpha = 0.754
+   City Hotel                Holt's Linear Trend alpha = 0.733, beta = 0.080
+   City Hotel            Seasonal Naive (Lag 52)                    Lag s=52
+ Test_MAE Test_RMSE Test_MAPE                    Best_Model
+    72.82    117.16      8.15                              
+    63.29    103.67      6.42                              
+    60.32     93.72      6.32 Best for Resort (Lowest RMSE)
+    64.20     98.85      6.61                              
+   104.38    165.80     10.93                              
+    83.32    128.90      7.19                              
+    80.40    126.31      6.63                              
+    72.81    113.49      6.16   Best for City (Lowest RMSE)
+    72.09    121.63      6.06                              
+   145.12    205.09     12.19                              
+
+================================================================================
+MANAGERIAL IMPLICATIONS FOR HOTEL STAFFING & CAPACITY PLANNING
+================================================================================
+1. Practical Utility of Forecast Errors:
+   - Simple Exponential Smoothing (SES) achieved the lowest test RMSE for both properties:
+     * Resort Hotel Test RMSE = 93.7 room-nights (MAPE = 6.32%)
+     * City Hotel Test RMSE = 113.5 room-nights (MAPE = 6.16%)
+   - Scale Conversion Note: Dividing weekly RMSE by 7 yields an average scale conversion of
+     ~13.4 (Resort) to ~16.2 (City) rooms/day. This provides a rough order-of-magnitude
+     illustration for intuitive scaling, NOT a true measure of daily operational forecast
+     uncertainty. Day-to-day fluctuations, weekend arrival surges, and intra-week variance
+     are smoothed out by weekly aggregation. Day-level operational uncertainty requires daily modeling.
+2. Housekeeping & Rostering Allocation:
+   - Housekeeping shifts depend directly on daily occupied rooms rather than arrival counts.
+   - Proposed Heuristic Policy: Core permanent staffing could be set to cover ~90% of expected
+     weekly demand (or baseline minus 1 SD), utilizing flexible on-call agency staff to absorb surges.
+     This is a proposed operational heuristic policy requiring local cost-benefit validation
+     (comparing idle wage costs against agency overtime premiums), rather than an empirically solved optimum.
+3. Food & Beverage (F&B) and Perishable Procurement:
+   - Buffet breakfast prep and perishable culinary ordering (BB and HB meals) can be adjusted
+     one week in advance based on SES projections, directly curbing food waste.
+4. Why Seasonal Naive Lag-52 Underperformed:
+   - SNaive produced the highest test MAPE (10.9% for Resort, 12.2% for City) because it fails to
+     account for secular growth between 2016 and 2017. Both hotels experienced structural growth,
+     causing a purely historical prior-year lag to systematically under-forecast demand.
+5. Short Historical Span Limitation:
+   - The entire dataset spans only 26 months. Because the training set covers just 1.5 years (78 weeks),
+     we observe only ONE previous winter and ONE previous summer. Long-term cyclical or macroeconomic
+     claims cannot be validated without multi-year longitudinal observation.
+================================================================================

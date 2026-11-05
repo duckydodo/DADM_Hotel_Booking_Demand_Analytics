@@ -1,0 +1,92 @@
+================================================================================
+         HOTEL PRICING ANALYTICS: AVERAGE DAILY RATE (ADR) DRIVERS      
+================================================================================
+
+--- STEP 1: ANALYTICAL SAMPLE DEFINITION & PROGRAMMATIC RECONCILIATION ---
+Programmatic Sample Reconciliation:
+                                                 Filtering_Stage Retained_Count
+                        Stage 0: Processed Cleaned Dataset Total         118563
+                     Stage 1: Completed Stays (is_canceled == 0)          74388
+                Stage 2: Paid Stays with Positive Rate (adr > 0)          73388
+         Stage 3: Known Distribution Channel (exclude 'Unknown')          73387
+ Stage 4: Sufficient Factor Support (exclude rare Room Type 'L')          73383
+                                     FINAL ANALYTICAL SAMPLE (N)          73383
+ Excluded_Count Percent_of_Cleaned
+              0             100.00
+          44175              62.74
+           1000              61.90
+              1              61.90
+              4              61.89
+          45180              61.89
+
+Methodological Note on Selection Bias:
+ Restricting the pricing analysis to completed stays introduces survivorship/selection bias.
+ Canceled reservations may have had higher prices or greater price elasticity (e.g. guests
+ cancel after finding a cheaper alternative). Thus, findings strictly reflect conditional
+ observational associations of REALIZED demand rather than unconditional market quotes.
+
+--- STEP 2: VARIABLE SPECIFICATION & FACTOR ENCODING ---
+Reference Categories Established:
+ - hotel               : City Hotel
+ - arrival_date_month  : January (Winter low season)
+ - arrival_date_year   : 2015 (Initial data collection year)
+ - market_segment      : Direct
+ - distribution_channel: Direct
+ - reserved_room_type  : Room Type A (Standard entry room)
+ - meal                : BB (Bed & Breakfast)
+ - customer_type       : Transient (Independent retail guest)
+
+Holdout Partitioning: 80% Training (58,706 rows) | 20% Testing (14,677 rows)
+
+--- STEP 3: MULTIPLE LINEAR REGRESSION (MLR) MODELING ---
+MLR Model Fit Statistics:
+ - R-squared (R2)         : 0.6063 (60.63% of ADR variance explained)
+ - Adjusted R-squared     : 0.6061
+ - Residual Standard Error: 29.64 EUR/$
+ - Overall F-statistic    : 2203.75 on 41 and 58664 DF (p-value: < 2.2e-16)
+
+Multicollinearity Diagnostics (Variance Inflation Factors):
+     Variable   VIF                     Status
+       adults 1.036 Low Collinearity (VIF < 5)
+     children 1.003 Low Collinearity (VIF < 5)
+       babies 1.002 Low Collinearity (VIF < 5)
+ total_nights 1.103 Low Collinearity (VIF < 5)
+    lead_time 1.096 Low Collinearity (VIF < 5)
+Note on Categorical Collinearity: 'market_segment' and 'distribution_channel' exhibit moderate
+ structural correlation (e.g. Direct/Direct, Online TA/TA-TO). Both are retained for business
+ completeness, but their standard errors should be interpreted in light of channel overlap.
+
+--- STEP 4: REGRESSION DECISION TREE (CART) MODELING ---
+CART Cross-Validation: Optimal Complexity Parameter (CP) = 0.00100
+Pruned Regression Tree Size: 59 terminal leaves (Evaluated Model)
+
+--- STEP 5: OUT-OF-SAMPLE PERFORMANCE COMPARISON ---
+Model Comparison on 20% Holdout Test Set:
+               Model_Architecture Train_RMSE Test_RMSE Train_MAE Test_MAE
+ Multiple Linear Regression (MLR)      29.63     29.58     21.71    21.81
+    Regression Tree (Pruned CART)      27.05     27.46     19.03    19.41
+ Train_R2 Test_R2
+   0.6063  0.6116
+   0.6719  0.6653
+
+================================================================================
+KEY BUSINESS TAKEAWAYS & MANAGERIAL IMPLICATIONS (OBSERVATIONAL ASSOCIATIONS):
+1. Seasonal Pricing Divergence:
+   - August achieves the highest rate premium (+74.17 EUR/$, p < 2.2e-16) relative to January baseline.
+   - Low season months (November, January, February) exhibit substantial baseline rate suppression.
+2. Room Type Tiering:
+   - Premium suites command substantial premiums: Room G (+60.16 EUR/$) and Room H (+63.84 EUR/$)
+     over baseline standard Room A (p < 2.2e-16).
+3. Party Size Associations:
+   - Each additional adult is associated with approximately +13.33 EUR/$ higher ADR (p < 2.2e-16).
+   - Each additional child is associated with approximately +13.98 EUR/$ higher ADR (p < 2.2e-16).
+4. Channel & Segment Concessions:
+   - Online Travel Agencies (OTAs) are associated with higher unit ADR (+9.47 EUR/$) than Direct bookings,
+     while wholesale Groups (-9.89 EUR/$) and Corporate (-11.46 EUR/$) trade at negotiated discounts.
+5. Model Architecture Benchmark:
+   - CART achieved superior out-of-sample prediction (Test R2: 66.53% vs MLR: 61.16%)
+     because it inherently captures non-linear seasonal interactions (Resort x August).
+   - MLR provides indispensable, interpretable marginal pricing coefficients for revenue management.
+   - Caution: These relationships reflect conditional observational associations ceteris paribus,
+     not causal interventions.
+================================================================================

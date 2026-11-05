@@ -1,0 +1,7 @@
+"Filter_Reason","Affected_Count","Percent_of_Raw"
+"Zero Total Guests (Phantom Bookings: adults+children+babies == 0)",180,0.151
+"Zero Overnight Stays (stays_in_weekend + stays_in_week == 0)",715,0.599
+"Negative ADR (Accounting adjustment / error: ADR < 0)",1,0.001
+"Extreme ADR Outlier (Typo: ADR == 5400 in standard room)",1,0.001
+"Overlap between criteria (multi-condition matches)",70,0.059
+"TOTAL UNIQUE ROWS EXCLUDED",827,0.693

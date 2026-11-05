@@ -1,0 +1,48 @@
+"Predictor_Term","Estimate_Beta","Std_Error","z_value","p_value","Odds_Ratio"
+"(Intercept)",-2.0933,0.0816,-25.64,"< 2.2e-16",0.1233
+"lead_time",0.0031,1e-04,23.59,"< 2.2e-16",1.0031
+"hotelResort Hotel",-0.1592,0.0241,-6.61,"3.9386e-11",0.8528
+"arrival_date_monthFebruary",0.4064,0.0794,5.12,"3.1239e-07",1.5014
+"arrival_date_monthMarch",0.249,0.0768,3.24,"1.1906e-03",1.2827
+"arrival_date_monthApril",0.232,0.0759,3.06,"2.2359e-03",1.2612
+"arrival_date_monthMay",0.3067,0.0758,4.05,"5.1698e-05",1.359
+"arrival_date_monthJune",0.4055,0.0765,5.3,"1.1398e-07",1.5
+"arrival_date_monthJuly",0.3871,0.0733,5.28,"1.2746e-07",1.4727
+"arrival_date_monthAugust",0.5288,0.0719,7.35,"1.9171e-13",1.6969
+"arrival_date_monthSeptember",0.3096,0.0724,4.28,"1.8976e-05",1.3629
+"arrival_date_monthOctober",0.412,0.0717,5.75,"8.9456e-09",1.5098
+"arrival_date_monthNovember",0.4024,0.074,5.44,"5.4579e-08",1.4954
+"arrival_date_monthDecember",0.5209,0.0737,7.07,"1.5400e-12",1.6835
+"market_segmentAviation",-0.3151,0.2495,-1.26,"2.0676e-01",0.7297
+"market_segmentComplementary",-0.2616,0.162,-1.62,"1.0629e-01",0.7698
+"market_segmentCorporate",-0.7421,0.1211,-6.13,"8.8287e-10",0.4761
+"market_segmentGroups",-0.3193,0.0947,-3.37,"7.4790e-04",0.7267
+"market_segmentOffline TA/TO",-0.7864,0.0975,-8.06,"7.3631e-16",0.4555
+"market_segmentOnline TA",0.7277,0.0944,7.71,"1.3054e-14",2.0703
+"distribution_channelCorporate",0.6308,0.1071,5.89,"3.9198e-09",1.8791
+"distribution_channelGDS",-0.1279,0.2685,-0.48,"6.3378e-01",0.8799
+"distribution_channelTA/TO",0.4438,0.0885,5.01,"5.3135e-07",1.5586
+"customer_typeContract",-0.6933,0.0589,-11.76,"< 2.2e-16",0.4999
+"customer_typeGroup",-1.1357,0.2034,-5.58,"2.3549e-08",0.3212
+"customer_typeTransient-Party",-0.1944,0.0326,-5.96,"2.4890e-09",0.8234
+"reserved_room_typeB",-0.1649,0.0864,-1.91,"5.6263e-02",0.848
+"reserved_room_typeC",-0.0416,0.1372,-0.3,"7.6178e-01",0.9593
+"reserved_room_typeD",0.0718,0.028,2.56,"1.0344e-02",1.0744
+"reserved_room_typeE",0.2485,0.0474,5.24,"1.6003e-07",1.2821
+"reserved_room_typeF",-0.0737,0.0736,-1,"3.1634e-01",0.929
+"reserved_room_typeG",0.0422,0.088,0.48,"6.3178e-01",1.0431
+"reserved_room_typeH",0.3744,0.1445,2.59,"9.5427e-03",1.4542
+"mealFB",0.9799,0.1164,8.42,"< 2.2e-16",2.6643
+"mealHB",-0.0035,0.0333,-0.1,"9.1679e-01",0.9965
+"mealSC",0.0185,0.0337,0.55,"5.8320e-01",1.0187
+"adults",0.1474,0.02,7.37,"1.6509e-13",1.1588
+"children",0.2691,0.0319,8.44,"< 2.2e-16",1.3088
+"babies",0.4917,0.1068,4.6,"4.1675e-06",1.6351
+"total_nights",0.0493,0.0041,11.9,"< 2.2e-16",1.0505
+"previous_cancellations",2.8799,0.0645,44.68,"< 2.2e-16",17.8119
+"previous_bookings_not_canceled",-0.6084,0.0343,-17.75,"< 2.2e-16",0.5442
+"booking_changes",-0.4032,0.0204,-19.76,"< 2.2e-16",0.6682
+"required_car_parking_spaces",-45.5539,687.5838,-0.07,"9.4718e-01",0
+"total_of_special_requests",-0.8061,0.0158,-51.06,"< 2.2e-16",0.4466
+"deposit_typeNon Refund",5.4038,0.12,45.03,"< 2.2e-16",222.2588
+"deposit_typeRefundable",-0.7978,0.3423,-2.33,"1.9765e-02",0.4503

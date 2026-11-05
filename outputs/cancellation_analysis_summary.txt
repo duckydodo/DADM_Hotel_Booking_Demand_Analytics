@@ -1,0 +1,71 @@
+================================================================================
+       HOTEL CANCELLATION RISK PREDICTION: TIMING AUDIT & MODELING      
+================================================================================
+
+--- STEP 1: PREDICTOR TIMING AUDIT & LEAKAGE PREVENTION ---
+Feature Availability Timing Audit Summary:
+ 1. Strict Initial-Booking Predictors: 14 features known with certainty at initial reservation creation.
+ 2. Pre-Arrival Dynamic Updates      : 3 features (booking_changes, special_requests, parking) that
+    may be updated between booking creation and arrival.
+ 3. Policy Selection                 : deposit_type (evaluated strictly in sensitivity model).
+ 4. Post-Outcome & Target Leakage    : reservation_status, status_date, assigned_room_type strictly excluded.
+ Audit table saved: outputs/tables/cancellation_predictor_timing_audit.csv
+
+Chronological Partitioning Details:
+ - Training Set (Arrivals <= 2016) : 78,043 rows (65.83% of sample) | Cancellation Rate: 36.44%
+ - Testing Set  (Arrivals == 2017) : 40,509 rows (34.17% of sample) | Cancellation Rate: 38.83%
+
+--- STEP 2: MODEL TRAINING (STRICT VS EXTENDED VS SENSITIVITY) ---
+Audit Qualification of Key Predictors:
+ 1. required_car_parking_spaces: Beta = -42.11, SE = 46.15, z = -0.91, p = 0.3616 (STATISTICALLY INSIGNIFICANT).
+    Methodological Note: In the sample, 0 cancellations occurred among guests requesting parking.
+    However, because of near-zero variance / quasi-complete separation, the Wald test standard error
+    is heavily inflated (SE = 46.15), making the coefficient statistically insignificant.
+    It reflects a non-representative sub-cohort and cannot be used as an operational panacea.
+ 2. lead_time: OR = 1.0054 per day (p < 2.2e-16; each 30 days increases cancellation odds by +17.2%).
+ 3. previous_cancellations: OR = 22.26 (p < 2.2e-16; prior history multiplies odds by 22.3x).
+ 4. total_of_special_requests: OR = 0.4099 (p < 2.2e-16; each request reduces odds by 59.0%).
+
+--- STEP 3: CLASSIFICATION DECISION TREES (CART AUDIT) ---
+Pruned CART Size (Strict Model)  : 13 leaves (Optimal CP = 0.00100)
+Pruned CART Size (Extended Model): 12 leaves (Optimal CP = 0.00100)
+
+--- STEP 4: OUT-OF-SAMPLE TEST EVALUATION & TIMING COMPARISON ---
+Model Timing & Architecture Comparison on 2017 Test Set (Threshold = 0.50):
+                                             Model Accuracy Precision
+ 1. Restricted Initial-Booking Logistic Regression   0.6926    0.6713
+    2. Restricted Initial-Booking CART (CV Pruned)   0.6989    0.7924
+      3. Extended Booking-Time Logistic Regression   0.7395    0.7154
+         4. Extended Booking-Time CART (CV Pruned)   0.7362    0.7605
+ 5. Diagnostic Sensitivity Logistic (With Deposit)   0.7591    0.7946
+ Sensitivity_Recall Specificity F1_Score AUC_ROC
+             0.4083      0.8731   0.5078  0.7372
+             0.3045      0.9494   0.4399  0.7339
+             0.5465      0.8620   0.6196  0.7953
+             0.4679      0.9065   0.5793  0.7277
+             0.5118      0.9160   0.6226  0.8203
+
+Timing Audit Insight:
+ - Restricted Initial-Booking Model: Relies exclusively on features known at booking creation.
+   Achieves Test AUC = 0.7372 (Accuracy: 69.26%, F1: 0.5078). This provides the true baseline for advance decision-making.
+ - Extended Booking-Time Model: Incorporates dynamic updates (special requests, booking changes, parking).
+   Achieves Test AUC = 0.7953 (Accuracy: 73.95%, F1: 0.6196). Gaining +0.058 AUC as guests interact pre-arrival.
+
+================================================================================
+MANAGERIAL IMPLICATIONS: OPERATIONAL USE OF CANCELLATION PREDICTIONS
+================================================================================
+1. Practical Prediction Timing in Hotel Operations:
+   - Initial Booking (Strict Model): 100-30 days out. Hotel uses AUC = 0.7372 baseline to flag
+     high-risk segments (wholesale groups, extended lead times) for deposit terms.
+   - Dynamic Pre-Arrival (Extended Model): 14-3 days out. Incorporating guest engagement (special requests,
+     booking changes) sharpens discrimination to AUC = 0.7953 for final arrival readiness.
+2. Insufficiency of Accuracy in Imbalanced Settings:
+   - In this 2017 test set (38.8% cancellation rate), predicting 'never cancel' yields 61.2% accuracy
+     with ZERO detection (Recall = 0%). Precision (71.5%) and Recall (54.7%) govern revenue trade-offs.
+3. Caution Against Premature 'Optimal' Overbooking Policies:
+   - Mathematical optimization via the critical fractile Cu / (Cu + Co) is IMPOSSIBLE without:
+     * Underage Cost (Cu): Lost room margin (ADR minus marginal servicing cost).
+     * Overage Cost (Co): Penalty of 'walking' a booked guest (rebooking, transport, goodwill loss).
+   - Because Co is typically multiple times Cu, risk scores should guide communication and deposit
+     rules rather than unconstrained capacity overbooking.
+================================================================================

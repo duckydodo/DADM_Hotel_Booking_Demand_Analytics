@@ -1,0 +1,7 @@
+"Filtering_Stage","Retained_Count","Excluded_Count","Percent_of_Cleaned"
+"Stage 0: Processed Cleaned Dataset Total",118563,0,100
+"Stage 1: Completed Stays (is_canceled == 0)",74388,44175,62.74
+"Stage 2: Paid Stays with Positive Rate (adr > 0)",73388,1000,61.9
+"Stage 3: Known Distribution Channel (exclude 'Unknown')",73387,1,61.9
+"Stage 4: Sufficient Factor Support (exclude rare Room Type 'L')",73383,4,61.89
+"FINAL ANALYTICAL SAMPLE (N)",73383,45180,61.89

@@ -1,0 +1,7 @@
+"Lead_Time_Bracket","Total_Bookings","Canceled_Count","Cancellation_Rate_Pct"
+"0-7 days",19246,1873,9.73
+"8-30 days",18848,5277,28
+"31-90 days",29436,11136,37.83
+"91-180 days",26384,11818,44.79
+"181-365 days",21505,11942,55.53
+">365 days",3144,2129,67.72

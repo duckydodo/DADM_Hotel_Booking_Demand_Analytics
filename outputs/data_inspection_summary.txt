@@ -1,0 +1,199 @@
+================================================================================
+         HOTEL BOOKING DEMAND ANALYTICS - DATA INSPECTION REPORT         
+================================================================================
+
+--- 1. BASIC DIMENSIONS & STRUCTURE ---
+Total Observations (Rows): 119,390
+Total Features (Columns) : 32
+
+Column Names and Data Types:
+  [01] hotel                          : character  (class: character)
+  [02] is_canceled                    : integer    (class: integer)
+  [03] lead_time                      : integer    (class: integer)
+  [04] arrival_date_year              : integer    (class: integer)
+  [05] arrival_date_month             : character  (class: character)
+  [06] arrival_date_week_number       : integer    (class: integer)
+  [07] arrival_date_day_of_month      : integer    (class: integer)
+  [08] stays_in_weekend_nights        : integer    (class: integer)
+  [09] stays_in_week_nights           : integer    (class: integer)
+  [10] adults                         : integer    (class: integer)
+  [11] children                       : integer    (class: integer)
+  [12] babies                         : integer    (class: integer)
+  [13] meal                           : character  (class: character)
+  [14] country                        : character  (class: character)
+  [15] market_segment                 : character  (class: character)
+  [16] distribution_channel           : character  (class: character)
+  [17] is_repeated_guest              : integer    (class: integer)
+  [18] previous_cancellations         : integer    (class: integer)
+  [19] previous_bookings_not_canceled : integer    (class: integer)
+  [20] reserved_room_type             : character  (class: character)
+  [21] assigned_room_type             : character  (class: character)
+  [22] booking_changes                : integer    (class: integer)
+  [23] deposit_type                   : character  (class: character)
+  [24] agent                          : character  (class: character)
+  [25] company                        : character  (class: character)
+  [26] days_in_waiting_list           : integer    (class: integer)
+  [27] customer_type                  : character  (class: character)
+  [28] adr                            : double     (class: numeric)
+  [29] required_car_parking_spaces    : integer    (class: integer)
+  [30] total_of_special_requests      : integer    (class: integer)
+  [31] reservation_status             : character  (class: character)
+  [32] reservation_status_date        : character  (class: character)
+
+Sample Rows (First 5 observations):
+         hotel is_canceled lead_time arrival_date_year arrival_date_month
+1 Resort Hotel           0       342              2015               July
+2 Resort Hotel           0       737              2015               July
+3 Resort Hotel           0         7              2015               July
+4 Resort Hotel           0        13              2015               July
+5 Resort Hotel           0        14              2015               July
+  arrival_date_week_number arrival_date_day_of_month stays_in_weekend_nights
+1                       27                         1                       0
+2                       27                         1                       0
+3                       27                         1                       0
+4                       27                         1                       0
+5                       27                         1                       0
+  stays_in_week_nights adults children babies meal country market_segment
+1                    0      2        0      0   BB     PRT         Direct
+2                    0      2        0      0   BB     PRT         Direct
+3                    1      1        0      0   BB     GBR         Direct
+4                    1      1        0      0   BB     GBR      Corporate
+5                    2      2        0      0   BB     GBR      Online TA
+  distribution_channel is_repeated_guest previous_cancellations
+1               Direct                 0                      0
+2               Direct                 0                      0
+3               Direct                 0                      0
+4            Corporate                 0                      0
+5                TA/TO                 0                      0
+  previous_bookings_not_canceled reserved_room_type assigned_room_type
+1                              0                  C                  C
+2                              0                  C                  C
+3                              0                  A                  C
+4                              0                  A                  A
+5                              0                  A                  A
+  booking_changes deposit_type agent company days_in_waiting_list customer_type
+1               3   No Deposit  NULL    NULL                    0     Transient
+2               4   No Deposit  NULL    NULL                    0     Transient
+3               0   No Deposit  NULL    NULL                    0     Transient
+4               0   No Deposit   304    NULL                    0     Transient
+5               0   No Deposit   240    NULL                    0     Transient
+  adr required_car_parking_spaces total_of_special_requests reservation_status
+1   0                           0                         0          Check-Out
+2   0                           0                         0          Check-Out
+3  75                           0                         0          Check-Out
+4  75                           0                         0          Check-Out
+5  98                           0                         1          Check-Out
+  reservation_status_date
+1              2015-07-01
+2              2015-07-01
+3              2015-07-02
+4              2015-07-02
+5              2015-07-03
+
+--- 2. MISSING VALUE AUDIT ---
+Columns with Missing/Unrecorded Data:
+ Column_Name Explicit_NA String_NULL Empty_Strings Total_Missing
+     company           0      112593             0        112593
+       agent           0       16340             0         16340
+     country           0         488             0           488
+    children           4           0             0             4
+ Percent_Missing
+          94.307
+          13.686
+           0.409
+           0.003
+
+Key Missing Data Insights:
+ - 'company' has 112,593 missing values (94.307% missing).
+ - 'agent' has 16,340 missing values (13.686% missing, represents non-agency/direct bookings).
+ - 'country' has 488 missing values (0.409% missing).
+ - 'children' has 4 explicit NA values (0.003% missing).
+
+--- 3. DUPLICATE ROWS DETECTION ---
+Exact Duplicate Rows: 31,994 (26.8% of total dataset)
+Note on Duplicates: In hotel reservation systems, identical rows can arise from:
+ (a) Technical duplication/re-entry during database collation, OR
+ (b) Multi-room bookings by families, event organizers, or tour groups sharing identical attributes.
+ Data cleaning strategy should carefully evaluate deduplication impact on class distribution.
+
+--- 4. TARGET VARIABLE: is_canceled ---
+           Status Count Percentage
+ Not Canceled (0) 75166      62.96
+     Canceled (1) 44224      37.04
+
+--- 5. HOTEL TYPES DISTRIBUTION & CANCELLATIONS ---
+   Hotel_Type Total_Bookings Share_Percent Not_Canceled_Count Canceled_Count
+   City Hotel          79330         66.45              46228          33102
+ Resort Hotel          40060         33.55              28938          11122
+ Cancellation_Rate
+             41.73
+             27.76
+
+--- 6. SUSPICIOUS VALUES & OUTLIER AUDIT ---
+Summary Statistics of Key Numeric Variables:
+                  Variable   Min   Q25 Median   Mean Q75   P95 P99  Max     SD
+                       adr -6.38 69.29  94.58 101.83 126 193.5 252 5400  50.54
+                 lead_time  0.00 18.00  69.00 104.01 160 320.0 444  737 106.86
+   stays_in_weekend_nights  0.00  0.00   1.00   0.93   2   2.0   4   19   1.00
+      stays_in_week_nights  0.00  1.00   2.00   2.50   3   5.0  10   50   1.91
+                    adults  0.00  2.00   2.00   1.86   2   3.0   3   55   0.58
+                  children  0.00  0.00   0.00   0.10   0   1.0   2   10   0.40
+                    babies  0.00  0.00   0.00   0.01   0   0.0   0   10   0.10
+      days_in_waiting_list  0.00  0.00   0.00   2.32   0   0.0  75  391  17.59
+    previous_cancellations  0.00  0.00   0.00   0.09   0   1.0   1   26   0.84
+           booking_changes  0.00  0.00   0.00   0.22   0   1.0   3   21   0.65
+ total_of_special_requests  0.00  0.00   0.00   0.57   1   2.0   3    5   0.79
+
+Specific Anomalies Identified:
+ [ADR]:
+   - Negative ADR count: 1 (Value: -6.38)
+   - Zero ADR count    : 1,959 (1.64% of total bookings - likely complimentary/promotional)
+   - ADR > 1000 count  : 1 (Extreme outlier value: 5400)
+
+ [Guest Counts]:
+   - Bookings with 0 adults, 0 children, and 0 babies: 180 (Phantom bookings)
+   - Max adults in a single booking: 55 (Group booking or data error)
+   - Max babies: 10, Max children: 10
+
+ [Stay Duration]:
+   - Bookings with 0 weekend AND 0 week nights: 715 (Same-day check-in/out or aborted bookings)
+   - Max weekend nights: 19, Max week nights: 50
+
+ [Lead Time]:
+   - Bookings with lead time > 1 year (> 365 days): 3,148 (2.64%)
+   - Maximum lead time: 737 days (~2.02 years)
+
+--- 7. CATEGORICAL ANOMALIES & DISTRIBUTION ---
+Meal Package Distribution:
+
+       BB        FB        HB        SC Undefined 
+    92310       798     14463     10650      1169 
+Note: 'Undefined' meal occurs 1169 times (maps to 'SC' / Self-Catering in dataset documentation).
+
+Market Segment Distribution:
+
+     Aviation Complementary     Corporate        Direct        Groups 
+          237           743          5295         12606         19811 
+Offline TA/TO     Online TA     Undefined 
+        24219         56477             2 
+Note: 'Undefined' market segment occurs 2 times.
+
+Distribution Channel Distribution:
+
+Corporate    Direct       GDS     TA/TO Undefined 
+     6677     14645       193     97870         5 
+Note: 'Undefined' distribution channel occurs 5 times.
+
+Room Assignment Mismatches (Reserved != Assigned):
+ - Total occurrences: 14,917 (12.49% of all bookings)
+   (Indicates complimentary upgrades, operational room reallocation, or overbooking reassignments)
+
+================================================================================
+SUMMARY OF DATA INSPECTION FOR DECISION MAKING:
+1. Data Volume: 119,390 rows and 32 variables.
+2. Missingness: 'company' (94.3% NULL), 'agent' (13.7% NULL), 'country' (0.4% NULL), 'children' (4 NAs).
+3. Duplicates: 31,994 duplicate rows (26.8%) require an explicit project-level handling decision.
+4. Outliers/Anomalies: ADR has a negative value (-6.38) and an extreme outlier (5,400.00).
+5. Logical Inconsistencies: 180 rows with 0 guests, 715 rows with 0 night stays, and undefined categories.
+6. Class Balance: 37.04% cancellation rate overall (City Hotel: 41.73%, Resort Hotel: 27.76%).
+================================================================================
